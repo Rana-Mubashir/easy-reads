@@ -1,9 +1,16 @@
 import React from 'react'
+import Navbar from './components/Navbar'
+import Footer from './components/Footer'
+import { Outlet } from 'react-router-dom'
+import BlogCard from './components/BlogCard'
 
 function App() {
+  
   return (
     <div>
-      <p className='text-red-500 text-4xl'>hello how are you</p>
+      <Navbar />
+      <Outlet/>
+      {/* <Footer /> */}
     </div>
   )
 }
