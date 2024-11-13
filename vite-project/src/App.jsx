@@ -7,10 +7,10 @@ import BlogCard from './components/BlogCard'
 function App() {
   
   return (
-    <div>
+    <div className='bg-gray-900'>
       <Navbar />
       <Outlet/>
-      {/* <Footer /> */}
+      <Footer />
     </div>
   )
 }

@@ -42,8 +42,8 @@ function LandingBlogSec() {
     ];
     return (
         <>
-            <div className="flex justify-center items-center p-5">
-                <h1 className='text-5xl underline font-mono'>Explore User Blogs</h1>
+            <div className="flex justify-center items-center p-10">
+                <h1 className='text-5xl underline font-mono text-white'>Explore User Blogs</h1>
             </div>
             <div className='flex justify-center items-center gap-5 flex-wrap p-5'>
                 {
