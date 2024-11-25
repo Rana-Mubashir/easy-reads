@@ -1,11 +1,30 @@
 import React from 'react'
 import BlogCard from '../../../components/BlogCard';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import CommentsPopup from '../../../components/CommentsPopup'
+import axios from 'axios';
+
 
 function LandingBlogSec() {
     const [isOpen, setIsOpen] = useState(false)
-    const [postComments, setPostComments] = useState([])
+    const [blogs,setBlogs]=useState([])
+
+    useEffect(()  => {
+        getAllBlogs()
+    },[])
+    
+    async function getAllBlogs(){
+        try {
+            const res=await axios.get('/api/post/getallposts/')
+            if(res){
+                console.log("response for getting all posts",res)
+                setBlogs(res.data.data)
+            }
+        } catch (error) {
+            console.log("error in getting all blogs",error)
+        }
+    }
+
     const blogData = [
         {
             imageUrl: 'https://picsum.photos/200/300?random=1',
@@ -47,14 +66,15 @@ function LandingBlogSec() {
             </div>
             <div className='flex justify-center items-center gap-5 flex-wrap p-5'>
                 {
-                    blogData.map((card, index) =>
+                    blogs&& blogs.map((card, index) =>
                         <BlogCard
                             key={index}
-                            imageUrl={card.imageUrl}
+                            imageUrl={card.image}
                             title={card.title}
                             description={card.description}
-                            likes={card.likes}
-                            comments={card.comments}
+                            likes={22}
+                            comments={4}
+                            userInfo={card.user}
                         />
                     )
                 }

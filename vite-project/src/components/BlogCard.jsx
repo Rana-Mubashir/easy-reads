@@ -3,7 +3,7 @@ import { useState } from 'react';
 import CommentsPopup from './CommentsPopup';
 import { Link } from 'react-router-dom';
 
-function BlogCard({ imageUrl, title, description, likes, comments, user, postDate }) {
+function BlogCard({ imageUrl, title, description, likes, comments, userInfo, postDate }) {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -16,7 +16,7 @@ function BlogCard({ imageUrl, title, description, likes, comments, user, postDat
                         className="w-10 h-10 rounded-full mr-3 border border-gray-200 shadow-sm"
                     />
                     <div>
-                        <h3 className=" text-white font-semibold ">Rana</h3>
+                        <h3 className=" text-white font-semibold ">{userInfo.name}</h3>
                         <p className="text-xs text-gray-400">{postDate}</p>
                     </div>
                 </div>

@@ -2,8 +2,18 @@ import React from 'react';
 import { IoMdNotifications } from 'react-icons/io';
 import { Link } from 'react-router-dom';
 import { FaPlus, FaSignOutAlt, FaSearch } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 function Navbar() {
+    const navigate=useNavigate()
+
+    function handleLogout(){
+       localStorage.setItem("email",'')
+       localStorage.setItem("isUser",false)
+       localStorage.setItem("userid",'')
+       navigate('/login')
+    }
+
     return (
         <div className='flex justify-between items-center bg-gray-800 px-8 py-2 shadow-md'>
             {/* Logo Section */}
@@ -48,7 +58,9 @@ function Navbar() {
                 </button>
                 </Link>
 
-                <button className="text-white px-5 py-2 rounded border-2 hover:bg-gray-500 font-medium transition duration-200 flex items-center space-x-2">
+                <button className="text-white px-5 py-2 rounded border-2 hover:bg-gray-500 font-medium transition duration-200 flex items-center space-x-2"
+                onClick={() =>  handleLogout()}
+                >
                     <FaSignOutAlt className="text-lg" />
                     <span>Logout</span>
                 </button>
