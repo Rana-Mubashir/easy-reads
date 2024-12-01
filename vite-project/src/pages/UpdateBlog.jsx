@@ -4,20 +4,29 @@ import { convert } from 'html-to-text';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 
-const AddBlogPage = () => {
+const UpdateBlogPage = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [image, setImage] = useState(null);
   const [showImage, setShowImage] = useState('')
   const [userId, setUserId] = useState('')
   const navigate = useNavigate()
+  const {postId}=useParams()
+  const BASEURL = "http://127.0.0.1:8000";
+
 
   useEffect(() => {
     const id = localStorage.getItem('userid')
     setUserId(id)
+    
   }, [])
+
+  useEffect(() => {
+    getPost()
+  } ,[postId])
 
   const handleTitleChange = (e) => setTitle(e.target.value);
   const handleDescriptionChange = (content) => setDescription(content);
@@ -27,32 +36,37 @@ const AddBlogPage = () => {
     setShowImage(URL.createObjectURL(e.target.files[0]))
   }
 
-
-
-  const handleSubmit = async () => {
-    console.log("image", image)
-    const formData = new FormData();
-    formData.append('userId', userId);
-    formData.append('title', title);
-    formData.append('description',description);
-    formData.append('image', image);
+  async function handleUpdatePost(){
     try {
-      const res = await axios.post('/api/post/createpost/', formData)
-      if (res) {
-        console.log("response for creating post", res)
-        toast.success("New Blog is Created Sucessfully!")
-        navigate('/')
-      }
+        const res=await axios.put(`/api/post/updatepost/${postId}/`)
+        if(res){
+            console.log("response for updation",res)
+            toast.success("Post Updated Sucessfully!")
+            navigate('/')
+        }
     } catch (error) {
-      toast.error("Something went wrong while ceating new blog!")
-      console.log("error in creating post", error)
+        toast.error("Something went wrong while updating the post !")
+        console.log("error in updating the post",error)
     }
+  }
 
-  };
+  async function getPost(){
+    try {
+        const res=await axios.get(`/api/post/getpostbyid/${postId}/`)
+        if(res){
+            console.log("response for getting post",res)
+            setTitle(res.data.data.title)
+            setDescription(res.data.data.description)
+            setImage(res.data.data.image)
 
+        }
+    } catch (error) {
+        console.log("error in getting post",error)
+    }
+  }
   return (
     <div className="max-w-4xl mx-auto p-6 bg-gray-900 text-white rounded-lg shadow-lg mt-10">
-      <h2 className="text-5xl font-semibold text-center mb-5 underline font-mono">Add New Blog</h2>
+      <h2 className="text-5xl font-semibold text-center mb-5 underline font-mono">Update Blog</h2>
 
       {/* Title Input */}
       <div className="mb-6">
@@ -78,7 +92,7 @@ const AddBlogPage = () => {
         />
         {image && (
           <img
-            src={showImage}
+            src={showImage ? showImage : (BASEURL+image)}
             alt="Preview"
             className="mt-4 w-full rounded-lg"
             style={{ maxHeight: '500px',objectFit:'contain' }} // Limit height and maintain aspect ratio
@@ -106,14 +120,14 @@ const AddBlogPage = () => {
       {/* Submit Button */}
       <div className="flex justify-center">
         <button
-          onClick={handleSubmit}
+          onClick={handleUpdatePost}
           className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-200"
         >
-          Add new Blog
+          Update Blog
         </button>
       </div>
     </div>
   );
 };
 
-export default AddBlogPage;
+export default UpdateBlogPage;
