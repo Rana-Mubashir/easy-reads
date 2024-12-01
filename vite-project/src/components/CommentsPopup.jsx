@@ -1,5 +1,7 @@
-import { AiOutlineClose } from 'react-icons/ai'; // Close icon
-import { useState } from 'react';
+import { AiOutlineClose } from 'react-icons/ai';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const comments = [
   {
@@ -18,22 +20,57 @@ const comments = [
   },
 ];
 
-const CommentsPopup = ({ isOpen, setIsOpen }) => {
-  const [newComment, setNewComment] = useState(""); 
+const CommentsPopup = ({ isOpen, setIsOpen, postId }) => {
+  const [newComment, setNewComment] = useState("");
+  const [allComments, setAllComments] = useState([])
+  const [userId, setUserId] = useState('')
+
+  useEffect(() => {
+    if (isOpen) {
+      getAllComments()
+      const id = localStorage.getItem('userid')
+      setUserId(id)
+    }
+  }, [isOpen])
+
+  async function getAllComments() {
+    console.log("postId", postId)
+    try {
+      const res = await axios.get(`/api/comment/getallcomments/${postId}/`)
+      if (res) {
+        setAllComments(res.data.comments)
+        console.log("response for getting all comments", res)
+      }
+    } catch (error) {
+      console.log("error in getting comments", error)
+    }
+  }
+
+  async function handleSubmit() {
+    const data = {
+      userId: userId,
+      postId: postId,
+      comment: newComment
+    }
+    try {
+      const res = await axios.post('/api/comment/addcomment/', data)
+      if (res) {
+        toast.success("Comment added sucessfully!")
+        console.log("response for creating comment", res)
+        setNewComment("")
+      }
+    } catch (error) {
+      toast.error("Something went wrong while adding comment!")
+      console.log("error in creating comments", error)
+    }
+  }
 
   const closeModal = () => {
-    setIsOpen(false); 
+    setIsOpen(false);
   };
 
   const handleCommentChange = (e) => {
-    setNewComment(e.target.value); 
-  };
-
-  const handleSubmit = () => {
-    if (newComment) {
-      console.log("New Comment:", newComment);
-      setNewComment(""); 
-    }
+    setNewComment(e.target.value);
   };
 
   return (
@@ -54,17 +91,17 @@ const CommentsPopup = ({ isOpen, setIsOpen }) => {
               </button>
             </div>
             <div className="p-4 space-y-4">
-              {comments.map((comment) => (
-                <div key={comment.id} className="flex items-start p-3 bg-gray-700 rounded-lg shadow-sm">
+              {allComments && allComments.map((comment,index) => (
+                <div key={index} className="flex items-start p-3 bg-gray-700 rounded-lg shadow-sm">
                   <img
-                    src={comment.userImage}
-                    alt={comment.userName}
+                    src=""
+                    alt={comment.user.userName}
                     className="w-10 h-10 rounded-full object-cover mr-3"
                   />
                   <div className="flex flex-col">
                     <div className="flex items-center">
-                      <h4 className="font-semibold text-white">{comment.userName}</h4>
-                      <span className="ml-2 text-sm text-gray-400">{comment.date}</span>
+                      <h4 className="font-semibold text-white">{comment.user.username}</h4>
+                      <span className="ml-2 text-sm text-gray-400">{Date.now()}</span>
                     </div>
                     <p className="text-gray-300 mt-2">{comment.comment}</p>
                   </div>
@@ -80,7 +117,7 @@ const CommentsPopup = ({ isOpen, setIsOpen }) => {
                 placeholder="Add a comment..."
               ></textarea>
               <button
-                onClick={handleSubmit}
+                onClick={() => handleSubmit()}
                 className="w-full bg-blue-600 text-white py-2 rounded-lg mt-2 hover:bg-blue-700 focus:outline-none"
               >
                 Submit Comment

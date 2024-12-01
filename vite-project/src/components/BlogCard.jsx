@@ -8,14 +8,14 @@ import { FaTrash, FaEdit } from 'react-icons/fa';
 function BlogCard({ imageUrl, title, description, likes, comments, userInfo, postDate, deleteBlog, postId }) {
     const [isOpen, setIsOpen] = useState(false);
     const BASEURL = "http://127.0.0.1:8000";
-    const MAX_DESCRIPTION_LENGTH = 150; // Max number of characters before truncating
+    const MAX_DESCRIPTION_LENGTH = 150;
 
     const truncatedDescription = description.length > MAX_DESCRIPTION_LENGTH
         ? description.substring(0, MAX_DESCRIPTION_LENGTH) + '...'
         : description;
     return (
         <>
-            <div className="max-w-md rounded-lg overflow-hidden shadow-lg bg-gray-800 transition-shadow duration-300 ease-in-out hover:shadow-xl">
+            <div className="max-w-lg rounded-lg overflow-hidden shadow-lg bg-gray-800 transition-shadow duration-300 ease-in-out hover:shadow-xl">
                 {/* User Info */}
                 <div className="flex items-center justify-between p-3">
                     <div className="flex items-center p-4">
@@ -29,20 +29,24 @@ function BlogCard({ imageUrl, title, description, likes, comments, userInfo, pos
                             <p className="text-xs text-gray-400">{Date.now}</p>
                         </div>
                     </div>
-                    <div className="flex space-x-4">
-                        <button
-                            onClick={() => deleteBlog(postId)}
-                            className="text-gray-500 hover:text-red-500 p-2 rounded-full transition-colors duration-300"
-                            title="Delete"
-                        >
-                            <FaTrash size={20} />
-                        </button>
-                        <Link to={`/update/${postId}`} title="Update">
-                            <button className="text-gray-500 hover:text-green-500 p-2 rounded-full transition-colors duration-300">
-                                <FaEdit size={20} />
-                            </button>
-                        </Link>
-                    </div>
+                    {
+                        parseInt(localStorage.getItem('userid')) === userInfo.id && (
+                            <div className="flex space-x-4">
+                                <button
+                                    onClick={() => deleteBlog(postId)}
+                                    className="text-gray-500 hover:text-red-500 p-2 rounded-full transition-colors duration-300"
+                                    title="Delete"
+                                >
+                                    <FaTrash size={20} />
+                                </button>
+                                <Link to={`/update/${postId}`} title="Update">
+                                    <button className="text-gray-500 hover:text-green-500 p-2 rounded-full transition-colors duration-300">
+                                        <FaEdit size={20} />
+                                    </button>
+                                </Link>
+                            </div>
+                        )
+                    }
                 </div>
 
                 {/* Post Image */}
@@ -78,7 +82,7 @@ function BlogCard({ imageUrl, title, description, likes, comments, userInfo, pos
                             <span>{comments}</span>
                         </button>
                     </div>
-                    <Link to='/blogdetailpage'>
+                    <Link to={`/blogdetailpage/${postId}`}>
                         <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition-colors duration-300">
                             Read More
                         </button>
@@ -90,6 +94,7 @@ function BlogCard({ imageUrl, title, description, likes, comments, userInfo, pos
             <CommentsPopup
                 isOpen={isOpen}
                 setIsOpen={setIsOpen}
+                postId={postId}
             />
         </>
     );

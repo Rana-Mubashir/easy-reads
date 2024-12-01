@@ -42,22 +42,13 @@ function Navbar() {
                         0
                     </span>
                     <IoMdNotifications className="text-white text-3xl cursor-pointer hover:text-gray-300 transition duration-200" />
-                </div>
-
-                <div className="flex items-center flex-col gap-2">
-                    <img
-                        src="https://source.unsplash.com/random/100x100"
-                        alt="User Profile"
-                        className="w-10 h-10 rounded-full border-2 border-blue-600 object-cover"
-                    />
-                </div>
+                </div>                
                 <Link to='/addnewblog'>
                 <button className="text-white px-5 py-2 rounded border-2 hover:bg-gray-500 font-medium transition duration-200 flex items-center space-x-2">
                     <FaPlus className="text-lg" />
                     <span>Add New</span>
                 </button>
                 </Link>
-
                 <button className="text-white px-5 py-2 rounded border-2 hover:bg-gray-500 font-medium transition duration-200 flex items-center space-x-2"
                 onClick={() =>  handleLogout()}
                 >

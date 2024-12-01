@@ -1,53 +1,95 @@
 import React, { useState, useEffect } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
-import { convert } from 'html-to-text';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-
+import { IoClose } from 'react-icons/io5';
 
 const AddBlogPage = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [image, setImage] = useState(null);
-  const [showImage, setShowImage] = useState('')
-  const [userId, setUserId] = useState('')
-  const navigate = useNavigate()
+  const [showImage, setShowImage] = useState('');
+  const [userId, setUserId] = useState('');
+  const [suggestedDescriptions, setSuggestions] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const id = localStorage.getItem('userid')
-    setUserId(id)
-  }, [])
+    const id = localStorage.getItem('userid');
+    setUserId(id);
+  }, []);
 
   const handleTitleChange = (e) => setTitle(e.target.value);
-  const handleDescriptionChange = (content) => setDescription(content);
 
-  function handleImageChange(e) {
-    setImage(e.target.files[0])
-    setShowImage(URL.createObjectURL(e.target.files[0]))
+  function decodeHtmlEntities(str) {
+    const doc = new DOMParser().parseFromString(str, 'text/html');
+    return doc.documentElement.textContent || str;
   }
 
+  const handleDescriptionChange = async (content) => {
+    setDescription(content);
+    const decodedContent = decodeHtmlEntities(content)
+    const plainText = decodedContent.replace(/<\/?[^>]+(>|$)/g, "").replace(/\\u[\dA-Fa-f]{4}/g, match => String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16))); if (plainText.length >= 3) {
+      try {
+        const response = await axios.post(
+          'https://api-inference.huggingface.co/models/EleutherAI/gpt-neo-2.7B', // GPT-Neo model API
+          {
+            inputs: plainText
+          },
+          {
+            headers: {
+              'Authorization': `Bearer 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`, // Replace with your API key
+            },
+          }
+        );
 
+        console.log("response for suggestion", response);
+        if (response.data && response.data.length > 0) {
+          const generatedText = response.data[0]?.generated_text;
+          if (generatedText) {
+            const cleanedText = generatedText.replace(/<\/?[^>]+(>|$)/g, "").replace(/\\u[\dA-Fa-f]{4}/g, match => String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16)));
+            setSuggestions([cleanedText.trim()]);
+          } else {
+            setSuggestions(['No suggestions available.']);
+          }
+        } else {
+          setSuggestions(['No suggestions available.']);
+        }
+      } catch (error) {
+        console.error("Error fetching suggestions:", error);
+        setSuggestions(['Failed to fetch suggestions.']);
+      }
+    } else {
+      setSuggestions([]);
+    }
+  };
+
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]);
+    setShowImage(URL.createObjectURL(e.target.files[0]));
+  };
 
   const handleSubmit = async () => {
-    console.log("image", image)
     const formData = new FormData();
     formData.append('userId', userId);
     formData.append('title', title);
-    formData.append('description',description);
+    formData.append('description', description);
     formData.append('image', image);
     try {
-      const res = await axios.post('/api/post/createpost/', formData)
+      const res = await axios.post('/api/post/createpost/', formData);
       if (res) {
-        console.log("response for creating post", res)
-        toast.success("New Blog is Created Sucessfully!")
-        navigate('/')
+        toast.success("New Blog is Created Successfully!");
+        navigate('/');
       }
     } catch (error) {
-      toast.error("Something went wrong while ceating new blog!")
-      console.log("error in creating post", error)
+      toast.error("Something went wrong while creating new blog!");
+      console.log("error in creating post", error);
     }
+  };
 
+  const handleDescriptionSuggestionClick = (suggestion) => {
+    setDescription(suggestion); // Set the clicked suggestion as the description
+    setSuggestions([]); // Clear suggestions after selection
   };
 
   return (
@@ -81,13 +123,13 @@ const AddBlogPage = () => {
             src={showImage}
             alt="Preview"
             className="mt-4 w-full rounded-lg"
-            style={{ maxHeight: '500px',objectFit:'contain' }} // Limit height and maintain aspect ratio
+            style={{ maxHeight: '500px', objectFit: 'contain' }}
           />
         )}
       </div>
 
-      {/* TinyMCE Editor */}
-      <div className="mb-6">
+      {/* TinyMCE Editor for Description */}
+      <div className="mb-6 relative">
         <label htmlFor="description" className="block text-lg font-medium mb-2">Blog Description</label>
         <Editor
           apiKey="dfgtc1e8hq2s2lwlv8xup43nlclag1l6q8up1cknp1q67vdh" // Your API Key
@@ -101,6 +143,29 @@ const AddBlogPage = () => {
           onEditorChange={handleDescriptionChange}
           className="w-full bg-gray-800 text-white rounded-lg border border-gray-700 focus:outline-none"
         />
+
+        {/* Suggestions for Description */}
+        {
+          suggestedDescriptions.length > 0 && (
+            <div className="absolute top-full left-0 w-full bg-gray-700 mt-2 rounded-lg shadow-lg z-10 max-h-60 overflow-auto">
+              {/* Close button */}
+              <div className="absolute top-2 right-2 cursor-pointer" onClick={() => setSuggestions([])}>
+                <IoClose size={20} className="text-white" />
+              </div>
+
+              {/* Suggested descriptions */}
+              {suggestedDescriptions.map((suggestion, index) => (
+                <div
+                  key={index}
+                  onClick={() => handleDescriptionSuggestionClick(suggestion)}
+                  className="p-4 cursor-pointer hover:bg-blue-600 transition duration-200"
+                >
+                  <p className="text-white">{suggestion}</p>
+                </div>
+              ))}
+            </div>
+          )
+        }
       </div>
 
       {/* Submit Button */}
@@ -114,6 +179,7 @@ const AddBlogPage = () => {
       </div>
     </div>
   );
+
 };
 
 export default AddBlogPage;

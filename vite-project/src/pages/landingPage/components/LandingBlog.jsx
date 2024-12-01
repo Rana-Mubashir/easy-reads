@@ -45,40 +45,6 @@ function LandingBlogSec() {
         }
     }
 
-    const blogData = [
-        {
-            imageUrl: 'https://picsum.photos/200/300?random=1',
-            title: 'How to Build a Blog with Next.js',
-            description:
-                'Learn how to build a blog using Next.js, React, and Tailwind CSS. This tutorial covers everything from setting up the project to deploying it to production.',
-            likes: 120,
-            comments: 45,
-        },
-        {
-            imageUrl: 'https://picsum.photos/200/300?random=2',
-            title: 'JavaScript Basics for Beginners',
-            description:
-                'A complete guide to understanding the fundamentals of JavaScript, perfect for beginners looking to dive into web development.',
-            likes: 230,
-            comments: 78,
-        },
-        {
-            imageUrl: 'https://picsum.photos/200/300?random=3',
-            title: 'Responsive Design with Tailwind CSS',
-            description:
-                'Learn how to create responsive, mobile-first websites using Tailwind CSS, making your designs beautiful and accessible.',
-            likes: 85,
-            comments: 22,
-        },
-        {
-            imageUrl: 'https://picsum.photos/200/300?random=4',
-            title: 'Building REST APIs with Django REST Framework',
-            description:
-                'This guide will teach you how to build and structure APIs using Django REST Framework, a powerful toolkit for creating RESTful APIs.',
-            likes: 150,
-            comments: 55,
-        },
-    ];
     return (
         <>
             <div className="flex justify-center items-center p-10">

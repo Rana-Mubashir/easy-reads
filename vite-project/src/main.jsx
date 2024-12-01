@@ -21,7 +21,7 @@ const router = createBrowserRouter(
     <>
       <Route path="/" element={<App />}>
         <Route index element={<LandingPage />} />
-        <Route path="/blogdetailpage" element={<BlogDetailPage />} />
+        <Route path="/blogdetailpage/:postId" element={<BlogDetailPage />} />
         <Route path="/addnewblog" element={<AddNewBlog />} />
         <Route path="/update/:postId" element={<UpdateBlogPage />} />
       </Route>
