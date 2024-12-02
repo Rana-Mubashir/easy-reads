@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useForm } from 'react-hook-form'
 import Env from '../Env/Env'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 function Signup() {
 
@@ -19,9 +20,11 @@ function Signup() {
                     password: res.data.password
                 }
                 await login(data)
+                toast.success("User login successfully");
             }
         } catch (error) {
             console.log("error in getting signup", error)
+            toast.error("Something went wrong")
         }
     }
 

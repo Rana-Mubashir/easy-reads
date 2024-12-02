@@ -58,6 +58,7 @@ const CommentsPopup = ({ isOpen, setIsOpen, postId }) => {
         toast.success("Comment added sucessfully!")
         console.log("response for creating comment", res)
         setNewComment("")
+        getAllComments()
       }
     } catch (error) {
       toast.error("Something went wrong while adding comment!")
@@ -94,7 +95,7 @@ const CommentsPopup = ({ isOpen, setIsOpen, postId }) => {
               {allComments && allComments.map((comment,index) => (
                 <div key={index} className="flex items-start p-3 bg-gray-700 rounded-lg shadow-sm">
                   <img
-                    src=""
+                    src="https://ik.imagekit.io/zugnpkswv/th.jpg?updatedAt=1733090599812"
                     alt={comment.user.userName}
                     className="w-10 h-10 rounded-full object-cover mr-3"
                   />

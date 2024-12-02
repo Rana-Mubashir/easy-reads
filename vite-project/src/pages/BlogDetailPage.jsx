@@ -44,12 +44,12 @@ function BlogDetailPage() {
         {/* Author & Date */}
         <div className="flex items-center mb-6">
           <img
-            src=''
+            src='https://ik.imagekit.io/zugnpkswv/th.jpg?updatedAt=1733090599812'
             // alt={data.user.username}
             className="w-12 h-12 rounded-full object-cover mr-4 border-2 border-gray-700"
           />
           <div>
-            {/* <p className="text-gray-400 font-semibold">{data.user.username}</p> */}
+            {/* <p className="text-gray-400 font-semibold">{data.user.userName}</p> */}
             <p className="text-gray-500 text-sm">{Date.now()}</p>
           </div>
         </div>
